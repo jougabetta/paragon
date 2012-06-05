@@ -1,4 +1,4 @@
-$(document).ready(function(){
+﻿$(document).ready(function(){
 
     $("#form_adm_login").validate({
 
@@ -17,7 +17,7 @@ $(document).ready(function(){
             },
             "senha": {
                 required: "Digite a senha!",
-                minlength: "A senha deve conter no m&iacute;nimo 6 caracteres"
+                minlength: "A senha deve conter no mínimo 6 caracteres"
             }
         }
     });

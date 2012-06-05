@@ -1,9 +1,10 @@
-<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+﻿<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 class Adm_Painel extends CI_Controller {
 
-    private $login = "jougabetta";
-    private $senha = "150291";
+    private $user_dao;
+    private $user;
+    private $error = array();
 
 	/**
 	 * Index Page for this controller.
@@ -20,27 +21,37 @@ class Adm_Painel extends CI_Controller {
 	 * map to /index.php/welcome/<method_name>
 	 * @see http://codeigniter.com/user_guide/general/urls.html
 	 */
+
+    function __construct(){
+
+	    $this->load->model("adm_user_dao");
+	    $this->load->model("adm_user");
+
+        $this->user_dao = new adm_user_dao();
+        $this->user = new adm_user();
+
+    }
+
 	public function index()
 	{
-	    $this->load->helper("form");
 		$this->load->view('adm/adm_header');
-		$this->load->view('adm/adm_painel');
+		$this->load->view('adm/adm_painel_login');
 		$this->load->view('adm/adm_footer');
 	}
 
     public function verifica_login(){
 
-        $userLogin = strip_tags(trim(addslashes($_POST["login"])));
-        $userSenha = strip_tags(trim(addslashes($_POST["senha"])));
+        if(!$this->user->verifica_limite_senha($_POST["senha"])){
 
-        if(strlen($userSenha) < 6){
-          $error = array("error_senha_lenght"=>"A senha deve conter no m�nimo 6 caracteres");
-          $this->load->view("adm/adm_painel", $error);
-        }
-
-        if($userLogin == $login && $userSenha == $senha){
+            $this->error["erro_limite_senha"] = "A senha deve conter no mínimo 6 caracteres"
 
         }
+
+        //continuar virificacao
+
+    	$this->load->view('adm/adm_header');
+    	$this->load->view('adm/adm_painel_login', $this->error);
+    	$this->load->view('adm/adm_footer');
 
     }
 
@@ -52,5 +63,3 @@ class Adm_Painel extends CI_Controller {
 
 }
 
-/* End of file welcome.php */
-/* Location: ./application/controllers/welcome.php */
