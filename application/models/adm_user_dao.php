@@ -31,6 +31,13 @@
 
         }
 
+        public function get_user_by_id($id){
+
+            $user_id_query = $this->db->query("SELECT * FROM adm_users WHERE id='$id'");
+            return $user_id_query->row();
+
+        }
+
     }
 
 ?>

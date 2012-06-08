@@ -32,17 +32,29 @@ class Adm_Painel extends CI_Controller {
         $this->AdmUser_dao = $this->adm_user_dao;
         $this->AdmUser = $this->adm_user;
 
+        if($this->session->userdata("usuario") != ""){
+
+            $user_by_id = $this->AdmUser_dao->get_user_by_id($this->session->userdata("usuario"));
+            $this->AdmUser->set_id($user_by_id->id);
+            $this->AdmUser->set_nome($user_by_id->nome);
+            $this->AdmUser->set_login($user_by_id->login);
+            $this->AdmUser->set_senha($user_by_id->senha);
+
+        }else{
+
+            $this->AdmUser = $this->adm_user;
+
+        }
+
 		$this->load->view('adm/adm_header');
 
     }
 
 	public function index(){
 
-        //jogar o objeto em uma session ou cookie.
-
         if($this->session->userdata("usuario") != ""){
 
-            $this->adm_painel();
+            $this->adm_inicial(); //se for outra página
 
         }else{
 
@@ -89,11 +101,11 @@ class Adm_Painel extends CI_Controller {
 
                 $this->session->set_userdata("usuario", $this->AdmUser->get_id());
 
-                redirect("adm_painel");
+                redirect("adm_painel/adm_inicial");
 
           }else{
 
-                $this->error["erro"] = "Login e Senha inválidos";
+                $this->error["erro"] = "Login e/ou Senha inválidos";
 		        $this->load->view('adm/adm_painel_login', $this->error);
 		        $this->load->view('adm/adm_footer');
 
@@ -103,9 +115,9 @@ class Adm_Painel extends CI_Controller {
 
     }
 
-    public function adm_painel(){
+    public function adm_inicial(){
 
-        $this->load->view("adm/adm_painel", array("adm_user"=>$this->AdmUser->get_nome()));
+        $this->load->view("adm/adm_inicial", array("adm_user"=>$this->AdmUser->get_nome()));
         $this->load->view('adm/adm_footer');
 
     }
