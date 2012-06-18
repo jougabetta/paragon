@@ -4,7 +4,7 @@
 
         rules:{
             "disputa_titulo": {
-                required: true
+                required: true,
                 maxlength: 100
             },
 
@@ -44,14 +44,14 @@
             "participante2_descricao": {
                 required: false,
                 maxlength: 250
-            },
+            }
 
         },
 
         messages:{
 
             "disputa_titulo": {
-              required: "Digite o título da disputa!"
+              required: "Digite o título da disputa!",
               maxlength: "O título deve conter no máximo 100 caracteres"
             },
 
@@ -60,20 +60,33 @@
             },
 
             "disputa_autor": {
-              required: "Digite o autor da disputa!"
+              required: "Digite o autor da disputa!",
               maxlength: "O autor deve conter no máximo 250 caracteres"
             },
 
-            "participante1_foto": {
+            "participante1_imagem": {
               required: "Selecione a imagem do primeiro participante!"
             },
 
             "participante1_nome": {
                 required: "Digite o nome do primeiro participante!",
                 minlength: "A nome deve conter no máximo 150 caracteres"
-            }
+            },
 
             "participante1_descricao": {
+                minlength: "A descrição deve conter no máximo 250 caracteres"
+            },
+
+            "participante2_imagem": {
+              required: "Selecione a imagem do segundo participante!"
+            },
+
+            "participante2_nome": {
+                required: "Digite o nome do segundo participante!",
+                minlength: "A nome deve conter no máximo 150 caracteres"
+            },
+
+            "participante2_descricao": {
                 minlength: "A descrição deve conter no máximo 250 caracteres"
             }
 

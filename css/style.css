@@ -11,3 +11,7 @@ input[type=submit], input[type=radio], input[type=checkbox], select {cursor:poin
 
 #container{width:1000px; height:auto; position:relative; float:none; margin:auto; background:#D4D0C8;}
 
+
+/* criar competicao */
+#form_disputa tr td label{color:#000; font-size:20px; float:right;}
+#form_disputa tr td input{width:300px; height:40px; color:#000; font-size:20px; padding-left:5px; float:left;}

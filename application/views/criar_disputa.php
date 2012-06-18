@@ -1,6 +1,6 @@
 ﻿<section id="formulario_comparacao">
 
-    <?php form_open("disputa/criar_disputa", array("id"=>"form_disputa")); ?>
+    <?php echo form_open_multipart("disputa/criar_disputa", array("id"=>"form_disputa")); ?>
 
         <table>
 
@@ -51,6 +51,6 @@
             </tr>
         </table>
 
-    <?php form_close(); ?>
+    <?php echo form_close(); ?>
 
 </section>
