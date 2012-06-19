@@ -28,6 +28,10 @@ class Adm_Painel extends CI_Controller {
 
 	    $this->load->model('adm_user_dao');
 	    $this->load->model('adm_user');
+	    $this->load->model('participante_dao');
+	    $this->load->model('participante');
+	    $this->load->model('disputa');
+	    $this->load->model('disputa_dao');
 
         $this->AdmUser_dao = $this->adm_user_dao;
         $this->AdmUser = $this->adm_user;
@@ -46,7 +50,7 @@ class Adm_Painel extends CI_Controller {
 
         }
 
-		$this->load->view('adm/adm_header');
+		$this->load->view('adm/adm_header', array("adm_user"=>$this->AdmUser->get_nome()));
 
     }
 
@@ -117,8 +121,42 @@ class Adm_Painel extends CI_Controller {
 
     public function adm_inicial(){
 
-        $this->load->view("adm/adm_inicial", array("adm_user"=>$this->AdmUser->get_nome()));
+        $this->load->view("adm/adm_inicial");
         $this->load->view('adm/adm_footer');
+
+    }
+
+    public function cadastrar_disputa(){
+
+
+
+    }
+
+    public function cadastrar_participante(){
+
+        $all_users["usuario"] = $this->adm_user_dao->get_all_users();
+
+        $this->load->view("adm/cadastrar_participante", $all_users);
+
+    }
+
+    public function cadastro_participante(){
+
+        $this->participante->set_nome($_POST["participante_nome"]);
+        $this->participante->set_descricao($_POST["participante_descricao"]);
+        $this->participante->set_imagem($_FILES["participante_imagem"]);
+        $this->participante->set_autor($_POST["participante_autor"]);
+
+        if($this->participante_dao->inserir_participante($this->participante)){
+
+            $this->load->view("adm/cadastrar_participante", array("sucesso_cadastro_participante" => "Participante cadastrado com sucesso!", "usuario_cadastrado" => $this->participante));
+
+        }else{
+
+            $this->error["erro_cadastro_participante"] = "Erro no cadastro do participante!";
+            $this->load->view("adm/cadastrar_participante", $this->error);
+
+        }
 
     }
 

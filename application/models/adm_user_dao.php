@@ -38,6 +38,13 @@
 
         }
 
+        public function get_all_users(){
+
+            $users_query = $this->db->query("SELECT * FROM adm_users");
+            return $users_query->result();
+
+        }
+
     }
 
 ?>

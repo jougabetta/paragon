@@ -1,11 +1,12 @@
 ﻿<?php
 
-    class Participante extends CI_Model(){
+    class Participante extends CI_Model{
 
         private $id;
         private $nome;
         private $imagem;
         private $descricao;
+        private $autor;
 
         public function __constructor(){
 
@@ -37,6 +38,11 @@
 
         }
 
+        public function set_autor($autor){
+
+            $this->autor = $autor;
+
+        }
 
         public function get_id(){
 
@@ -59,6 +65,12 @@
         public function get_descricao(){
 
             return $this->descricao;
+
+        }
+
+        public function get_autor(){
+
+            return $this->autor;
 
         }
 

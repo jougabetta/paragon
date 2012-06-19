@@ -17,11 +17,5 @@ class Inicial extends CI_Controller {
 
 	}
 
-    public function criar_disputa(){
-
-        $this->load->view("criar_disputa");
-		$this->load->view('footer');
-
-    }
 
 }

@@ -10,3 +10,20 @@
     <script src="<?php echo site_url(); ?>js/adm_functions.js"></script>
 </head>
 <body>
+
+bem vindo <?php echo $adm_user; ?>
+
+<br /><br />
+<nav>
+
+    <ul>
+
+        <li><a href="<?php echo site_url(); ?>adm_painel/">INICIAL</a></li>
+        <li><a href="<?php echo site_url(); ?>adm_painel/criar_disputa">criar disputa</a></li>
+        <li><a href="<?php echo site_url(); ?>adm_painel/cadastrar_participante">criar participante</a></li>
+
+    </ul>
+
+</nav>
+
+<br /><br />
