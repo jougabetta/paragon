@@ -8,25 +8,40 @@
 
         }
 
+        public function get_all_participantes(){
+
+            $participantes = $this->db->query("SELECT id, nome, autor FROM participantes");
+
+            return $participantes->result();
+
+        }
+
+        public function get_participante_by_id($id){
+
+            $participante = $this->db->query("SELECT * FROM participantes WHERE id='$id'");
+
+            return $participante->row();
+
+        }
+
+        public function get_descricao($id){
+
+            $descricao = $this->db->query("SELECT descricao FROM descricoes WHERE id='$id'");
+
+            return $descricao->row();
+
+        }
+
         public function inserir_participante($participante){
 
             $nome = $participante->get_nome();
             $autor = $participante->get_autor();
+            $descricao = $participante->get_descricao();
             $imagem = $participante->get_imagem();
 
-            if($this->armazenar_imagem($participante->get_imagem())){
+            if($this->armazenar_imagem($imagem)){
 
-                if( strlen($participante->get_descricao()) > 0 ){
-
-                    $id_descricao = $this->inserir_descricao($participante->get_descricao());
-
-                }else{
-
-                   $id_descricao = "";
-
-                }
-
-                $inserir_participante = $this->db->query("INSERT INTO participantes SET nome='$nome', autor='$autor', imagem='$imagem[name]', descricao='$id_descricao'");
+                $inserir_participante = $this->db->query("INSERT INTO participantes SET nome='$nome', autor='$autor', imagem='$imagem[name]', descricao='$descricao'");
                 return TRUE;
 
             }else{
@@ -37,11 +52,48 @@
 
         }
 
-        public function inserir_descricao($descricao){
+        public function update_participante($participante){
 
-            $inserir_descricao = $this->db->query("INSERT INTO descricoes SET descricao='$descricao'");
+            $id = $participante->get_id();
+            $nome = $participante->get_nome();
+            $autor = $participante->get_autor();
+            $descricao = $participante->get_descricao();
+            $imagem = $participante->get_imagem();
 
-            return $this->db->insert_id();
+            if($this->session->userdata("participante_imagem") == $imagem){
+
+                $this->db->query("UPDATE participantes SET nome='$nome', autor='$autor', descricao='$descricao' WHERE id='$id'");
+                return TRUE;
+
+            }else{
+
+                if($this->armazenar_imagem($imagem)){
+
+
+                    $this->db->query("UPDATE participantes SET nome='$nome', autor='$autor', imagem='$imagem[name]', descricao='$descricao' WHERE id='$id'");
+                    return TRUE;
+
+                }else{
+
+                    return false;
+
+                }
+
+            }
+
+        }
+
+        public function delete_participante($id){
+
+            if($this->db->query("DELETE FROM participantes WHERE id='$id'")){
+
+                return TRUE;
+
+            }else{
+
+                return FALSE;
+
+            }
 
         }
 

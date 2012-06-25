@@ -36,7 +36,7 @@ class Adm_Painel extends CI_Controller {
         $this->AdmUser_dao = $this->adm_user_dao;
         $this->AdmUser = $this->adm_user;
 
-        if($this->session->userdata("usuario") != ""){
+        if( $this->isset_session("usuario") ){
 
             $user_by_id = $this->AdmUser_dao->get_user_by_id($this->session->userdata("usuario"));
             $this->AdmUser->set_id($user_by_id->id);
@@ -44,76 +44,57 @@ class Adm_Painel extends CI_Controller {
             $this->AdmUser->set_login($user_by_id->login);
             $this->AdmUser->set_senha($user_by_id->senha);
 
+		    $this->load->view('adm/adm_header', array("adm_user"=>$this->AdmUser->get_nome()));
+		    $this->load->view('adm/adm_menu');
+
         }else{
 
-            $this->AdmUser = $this->adm_user;
+            if($this->isset_session("adm_painel_login")){
+
+                $this->AdmUser = $this->adm_user;
+
+            }else{
+
+                $this->AdmUser = $this->adm_user;
+                $this->session->set_userdata("adm_painel_login", 1);
+                redirect("adm_painel/adm_painel_login");
+
+            }
 
         }
-
-		$this->load->view('adm/adm_header', array("adm_user"=>$this->AdmUser->get_nome()));
 
     }
 
 	public function index(){
 
-        if($this->session->userdata("usuario") != ""){
-
-            $this->adm_inicial(); //se for outra página
-
-        }else{
-
-      		$this->load->view('adm/adm_painel_login');
-      		$this->load->view('adm/adm_footer');
-
-        }
+        $this->adm_inicial();
 
 	}
 
-    public function verifica_login(){
+    public function adm_painel_login(){
 
-        if($_POST["login"] == ""){
+        $this->load->view("adm/adm_painel_login");
+        $this->session->unset_userdata("adm_painel_login");
 
-            $this->error["erro_login"] = "Digite o login!";
+    }
 
-        }
+    public function logout(){
 
-        if($_POST["senha"] == ""){
+       $this->session->unset_userdata("usuario");
 
-            $this->error["erro_senha"] = "Digite a senha!";
+       redirect("adm_painel/");
 
-        }elseif(!$this->AdmUser->verifica_limite_senha($_POST["senha"])){
+    }
 
-            $this->error["erro_senha"] = "A senha deve conter no mínimo 6 caracteres";
+    public function isset_session($session){
 
-        }
+        if($this->session->userdata($session) != ""){
 
-        if(count($this->error) > 0){
-
-            $this->load->view('adm/adm_painel_login', $this->error);
-        	$this->load->view('adm/adm_footer');
+            return TRUE;
 
         }else{
 
-          if($this->AdmUser_dao->verifica_login($_POST["login"], $_POST["senha"])){
-
-                $user = $this->AdmUser_dao->get_user_by_login($_POST["login"], $_POST["senha"]);
-
-                $this->AdmUser->set_id($user->id);
-                $this->AdmUser->set_nome($user->nome);
-                $this->AdmUser->set_login($user->login);
-                $this->AdmUser->set_senha($user->senha);
-
-                $this->session->set_userdata("usuario", $this->AdmUser->get_id());
-
-                redirect("adm_painel/adm_inicial");
-
-          }else{
-
-                $this->error["erro"] = "Login e/ou Senha inválidos";
-		        $this->load->view('adm/adm_painel_login', $this->error);
-		        $this->load->view('adm/adm_footer');
-
-          }
+            return FALSE;
 
         }
 
@@ -128,7 +109,73 @@ class Adm_Painel extends CI_Controller {
 
     public function cadastrar_disputa(){
 
+        $all_users = $this->adm_user_dao->get_all_users();
+        $all_participantes = $this->participante_dao->get_all_participantes();
 
+        $this->load->view("adm/cadastrar_disputa", array("usuario" => $all_users, "participantes" => $all_participantes));
+
+    }
+
+    public function cadastro_disputa(){
+
+        $this->disputa->set_titulo($_POST["disputa_titulo"]);
+        $this->disputa->set_descricao($_POST["disputa_descricao"]);
+        $this->disputa->set_autor($_POST["disputa_autor"]);
+        $this->disputa->set_status($_POST["disputa_status"]);
+        $this->disputa->set_data("");
+
+        $all_participantes = $this->participante_dao->get_all_participantes();
+
+        for($i=0 ; $i < count($all_participantes) ; $i++){
+
+            if(isset($_POST["disputa_participante".$i])){
+
+                if(!isset($participante1)){
+
+                    $participante1 = $_POST["disputa_participante".$i];
+                    $this->disputa->set_participante1($participante1);
+
+                }else{
+
+                    $participante2 = $_POST["disputa_participante".$i];
+                    $this->disputa->set_participante2($participante2);
+                    break;
+
+                }
+
+            }
+
+        }
+
+        if($this->disputa_dao->inserir_disputa($this->disputa)){
+
+            $this->load->view("adm/cadastrar_disputa", array("sucesso_cadastro_disputa" => "Disputa cadastrada com sucesso!", "disputa_cadastrada" => $this->disputa, "participantes" => $all_participantes));
+
+        }else{
+
+            $this->error["erro_cadastro_disputa"] = "Erro no cadastro da disputa!";
+            $this->load->view("adm/cadastrar_disputa", $this->error);
+
+        }
+
+    }
+
+    public function visualizar_disputas(){
+
+        $disputasQuery = $this->disputa_dao->get_all_disputas();
+        $disputas["disputas"] = $disputasQuery;
+
+        $this->load->view("adm/visualizar_disputas", $disputas);
+
+    }
+
+    public function troca_disputa_status(){
+
+        $id = $_GET["id"];
+        $status = $_GET["status"];
+
+        $this->disputa_dao->troca_status($id, $status);
+        redirect("adm_painel/visualizar_disputas");
 
     }
 
@@ -157,6 +204,86 @@ class Adm_Painel extends CI_Controller {
             $this->load->view("adm/cadastrar_participante", $this->error);
 
         }
+
+    }
+
+    public function visualizar_participantes(){
+
+        $participantesQuery = $this->participante_dao->get_all_participantes();
+        $participantes["participantes"] = $participantesQuery;
+
+        $this->load->view("adm/visualizar_participantes", $participantes);
+
+    }
+
+    public function editar_participante(){
+
+        $participante = $this->participante_dao->get_participante_by_id($_GET["id"]);
+
+        $this->participante->set_id($participante->id);
+        $this->participante->set_nome($participante->nome);
+        $this->participante->set_autor($participante->autor);
+        $this->participante->set_descricao($participante->descricao);
+        $this->participante->set_imagem($participante->imagem);
+
+        $this->session->set_userdata("participante_imagem", $this->participante->get_imagem());
+        $all_users = $this->adm_user_dao->get_all_users();
+
+        $this->load->view("adm/editar_participante", array("participante" => $this->participante, "usuario" => $all_users));
+
+    }
+
+    public function edicao_participante(){
+
+        $this->participante->set_id($_POST["participante_id"]);
+        $this->participante->set_nome($_POST["participante_nome"]);
+        $this->participante->set_descricao($_POST["participante_descricao"]);
+        $this->participante->set_autor($_POST["participante_autor"]);
+
+        if($_FILES["participante_imagem"]["name"] != ""){
+
+            $this->participante->set_imagem($_FILES["participante_imagem"]);
+            $imagem = $_FILES["participante_imagem"]["name"];
+
+        }else{
+
+            $this->participante->set_imagem($this->session->userdata("participante_imagem"));
+            $imagem = $this->session->userdata("participante_imagem");
+
+        }
+
+        $all_users = $this->adm_user_dao->get_all_users();
+
+        if($this->participante_dao->update_participante($this->participante)){
+
+            $this->participante->set_imagem($imagem);
+            $this->load->view("adm/editar_participante", array("sucesso_edicao_participante" => "Participante editado com sucesso!", "participante" => $this->participante, "usuario" => $all_users));
+
+        }else{
+
+            $this->error["erro_edicao_participante"] = "Erro na edição do participante!";
+            $this->load->view("adm/editar_participante", $this->error);
+
+        }
+
+    }
+
+    public function excluir_participante(){
+
+        if($this->participante_dao->delete_participante($_GET["id"])){
+
+            $participantesQuery = $this->participante_dao->get_all_participantes();
+
+            $this->load->view("adm/visualizar_participantes", array("sucesso_exclusao_participante" => "Participante excluído com sucesso!", "participantes" => $participantesQuery));
+
+        }else{
+
+            $participantesQuery = $this->participante_dao->get_all_participantes();
+
+            $this->load->view("adm/visualizar_participantes", array("erro_exclusao_participante" => "Erro na exclusão do participante!", "participantes" => $participantesQuery));
+
+        }
+
 
     }
 

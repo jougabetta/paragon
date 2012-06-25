@@ -10,6 +10,7 @@
         private $vencedor;
         private $data;
         private $descricao;
+        private $status;
 
         public function __constructor(){
 
@@ -73,6 +74,12 @@
 
         }
 
+        public function set_status($status){
+
+            $this->status = $status;
+
+        }
+
         public function get_id(){
 
             return $this->id;
@@ -118,6 +125,12 @@
         public function get_descricao(){
 
             return $this->descricao;
+
+        }
+
+        public function get_status(){
+
+            return $this->status;
 
         }
 
