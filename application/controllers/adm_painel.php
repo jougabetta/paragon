@@ -179,6 +179,90 @@ class Adm_Painel extends CI_Controller {
 
     }
 
+    public function editar_disputa(){
+
+        $disputa = $this->disputa_dao->get_disputa_by_id($_GET["id"]);
+
+        $this->disputa->set_id($disputa->id);
+        $this->disputa->set_titulo($disputa->titulo);
+        $this->disputa->set_autor($disputa->autor);
+        $this->disputa->set_descricao($disputa->descricao);
+        $this->disputa->set_data($disputa->data);
+        $this->disputa->set_participante1($disputa->participante1);
+        $this->disputa->set_participante2($disputa->participante2);
+        $this->disputa->set_status($disputa->status);
+
+        $all_users = $this->adm_user_dao->get_all_users();
+        $all_participantes = $this->participante_dao->get_all_participantes();
+
+        $this->load->view("adm/editar_disputa", array("usuario" => $all_users, "participantes" => $all_participantes, "disputa" => $this->disputa));
+
+    }
+
+    public function edicao_disputa(){
+
+        $all_users = $this->adm_user_dao->get_all_users();
+        $all_participantes = $this->participante_dao->get_all_participantes();
+
+        $this->disputa->set_id($_POST["disputa_id"]);
+        $this->disputa->set_titulo($_POST["disputa_titulo"]);
+        $this->disputa->set_descricao($_POST["disputa_descricao"]);
+        $this->disputa->set_autor($_POST["disputa_autor"]);
+        $this->disputa->set_data("");
+        $this->disputa->set_status($_POST["disputa_status"]);
+
+        for($i=0 ; $i < count($all_participantes) ; $i++){
+
+            if(isset($_POST["disputa_participante".$i])){
+
+                if(!isset($participante1)){
+
+                    $participante1 = $_POST["disputa_participante".$i];
+                    $this->disputa->set_participante1($participante1);
+
+                }else{
+
+                    $participante2 = $_POST["disputa_participante".$i];
+                    $this->disputa->set_participante2($participante2);
+                    break;
+
+                }
+
+            }
+
+        }
+
+        if($this->disputa_dao->update_disputa($this->disputa)){
+
+            $this->load->view("adm/editar_disputa", array("sucesso_edicao_disputa" => "Disputa editada com sucesso!", "disputa" => $this->disputa, "participantes" => $all_participantes, "usuario" => $all_users));
+
+        }else{
+
+            $this->error["erro_edicao_disputa"] = "Erro na edição da disputa!";
+            $this->load->view("adm/editar_disputa", $this->error);
+
+        }
+
+    }
+
+    public function excluir_disputa(){
+
+        if($this->disputa_dao->delete_disputa($_GET["id"])){
+
+            $disputasQuery = $this->disputa_dao->get_all_disputas();
+
+            $this->load->view("adm/visualizar_disputas", array("sucesso_exclusao_disputa" => "Disputa excluída com sucesso!", "disputas" => $disputasQuery));
+
+        }else{
+
+            $participantesQuery = $this->participante_dao->get_all_participantes();
+
+            $this->load->view("adm/visualizar_participantes", array("erro_exclusao_participante" => "Erro na exclusão do participante!", "participantes" => $participantesQuery));
+
+        }
+
+    }
+
     public function cadastrar_participante(){
 
         $all_users["usuario"] = $this->adm_user_dao->get_all_users();

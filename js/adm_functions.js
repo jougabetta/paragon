@@ -115,16 +115,16 @@ $(document).ready(function(){
 
         messages:{
 
-            "participante_nome": {
+            "disputa_titulo": {
               required: "Digite o título da disputa!",
               maxlength: "O título deve conter no máximo 150 caracteres."
             },
 
-            "participante_descricao": {
+            "disputa_descricao": {
               maxlength: "A descrição deve conter no máximo 300 caracteres."
             },
 
-            "participante_autor": {
+            "disputa_autor": {
               required: "Digite o autor da disputa!",
             },
 
