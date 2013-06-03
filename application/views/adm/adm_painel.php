@@ -1,1 +1,0 @@
-bem vindo <?php echo $adm_user; ?>

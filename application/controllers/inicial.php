@@ -119,18 +119,34 @@ class Inicial extends CI_Controller {
 
         }else{
 
-            $participante1 = $this->participante_dao->get_participante_by_id($disputas[0]->participante1);
-            $participante2 = $this->participante_dao->get_participante_by_id($disputas[0]->participante2);
+            if( isset($disputas[0]) ) {
 
-            $anterior = count($disputas) - 1;
+                $participante1 = $this->participante_dao->get_participante_by_id($disputas[0]->participante1);
+                $participante2 = $this->participante_dao->get_participante_by_id($disputas[0]->participante2);
 
-            if(isset($_COOKIE["disputa_".$disputas[0]->id]) && $_COOKIE["disputa_".$disputas[0]->id] == $disputas[0]->id){
-                $votos = $this->disputa_dao->get_votos($disputa->id);
+                $anterior = count($disputas) - 1;
+
+                if(isset($_COOKIE["disputa_".$disputas[0]->id]) && $_COOKIE["disputa_".$disputas[0]->id] == $disputas[0]->id){
+                    $votos = $this->disputa_dao->get_votos($disputas[0]->id);
+                }else{
+                    $votos = "";
+                }
+
+                if( count($disputas) > 1 ){ 
+
+        		  $this->load->view('inicial', array("disputa" => $disputas[0], "participante1" => $participante1, "participante2" => $participante2, "proxima" => $disputas[1], "anterior" => $disputas[$anterior], "votos" => $votos));
+
+                }else{
+
+                  $this->load->view('inicial', array("disputa" => $disputas[0], "participante1" => $participante1, "participante2" => $participante2, "votos" => $votos));
+
+                }
+
             }else{
-                $votos = "";
-            }
 
-    		$this->load->view('inicial', array("disputa" => $disputas[0], "participante1" => $participante1, "participante2" => $participante2, "proxima" => $disputas[1], "anterior" => $disputas[$anterior], "votos" => $votos));
+                $this->load->view('inicial', array("disputa" => FALSE));
+
+            }
 
         }
 
@@ -141,11 +157,11 @@ class Inicial extends CI_Controller {
         $disputa = $_POST["disputa"];
         $participante = $_POST["participante"];
 
-        setcookie("disputa_".$disputa, $disputa, time()+10800);
-
+        setcookie("disputa_".$disputa, $disputa, time()+10800, "/");
+        
         if($this->disputa_dao->registrar_voto($disputa, $participante)){
 
-            $votos = $this->disputa_dao->get_votos($disputa);;
+            $votos = $this->disputa_dao->get_votos($disputa);
 
             echo "<p class='resultado_voto' id='votos_participante1'>$votos->participante1</p>
                   <p class='resultado_voto' id='votos_participante2'>$votos->participante2</p>";

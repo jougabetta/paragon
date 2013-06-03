@@ -35,7 +35,8 @@
             $participante2 = $disputa->get_participante2();
 
             $inserir_disputa = $this->db->query("INSERT INTO disputas SET titulo='$titulo', descricao='$descricao', autor='$autor', status='$status', data='$data', participante1='$participante1', participante2='$participante2'");
-            $inserir_disputa_votos = $this->db->query("INSERT INTO votos SET participante1='0', participante2='0'");
+            $id_disputa = $this->db->insert_id();
+            $inserir_disputa_votos = $this->db->query("INSERT INTO votos SET participante1='0', participante2='0', id_disputa='$id_disputa'");
             return TRUE;
 
         }

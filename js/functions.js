@@ -13,6 +13,7 @@ function registra_voto(disp, part){
         success: function(feedback){ $(".botao_votar").fadeOut("slow"); $(".votos").html(feedback); $(".resultado_voto").fadeIn("slow"); }
     });
 }
+
 $(document).ready(function(){
 
 });
